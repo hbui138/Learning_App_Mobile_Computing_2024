@@ -12,11 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.learningapp.R
 import com.example.learningapp.components.ButtonComponent
 
 @Composable
-fun MenuScreen(onLearnClick: () -> Unit, onWriteClick: () -> Unit, onQuitClick: () -> Unit) {
+fun MenuScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -34,18 +35,9 @@ fun MenuScreen(onLearnClick: () -> Unit, onWriteClick: () -> Unit, onQuitClick: 
         )
 
         // Menu Buttons
-        ButtonComponent( "Learn", onLearnClick)
-        ButtonComponent("Write", onWriteClick)
-        ButtonComponent("Quit", onQuitClick)
-    }
-}
+        ButtonComponent("Learn", navController, "learnMenu")
+        ButtonComponent("Write", navController, "writeMenu")
+//        ButtonComponent("Quit", navController, "quitScreen") // You might need custom handling here
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewMenuScreen() {
-    MenuScreen(
-        onLearnClick = {},
-        onWriteClick = {},
-        onQuitClick = {}
-    )
+    }
 }

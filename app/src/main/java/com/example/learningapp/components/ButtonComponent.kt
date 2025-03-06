@@ -10,15 +10,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
 fun ButtonComponent(
     label: String,
-    onClick: () -> Unit,
+    navController: NavController,
+    destination: String,
     modifier: Modifier = Modifier
 ) {
     Button(
-        onClick = onClick,
+        onClick = { navController.navigate(destination) }, // Use navController for navigation
         modifier = modifier
             .width(200.dp)
             .padding(vertical = 8.dp)

@@ -12,10 +12,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.learningapp.components.ButtonComponent
 
 @Composable
-fun LearnScreen(onWriteClick: () -> Unit) {
+fun LearnScreen(navController: NavController) {
     var selectedLetter by remember { mutableStateOf<String?>(null) }
 
     Column(
@@ -67,12 +68,6 @@ fun LearnScreen(onWriteClick: () -> Unit) {
         Spacer(modifier = Modifier.height(32.dp))
 
         // "Write" Button
-        ButtonComponent("Write", onWriteClick)
+        ButtonComponent("Write", navController, "writeMenu")
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewLearnScreen() {
-    LearnScreen(onWriteClick = {})
 }
