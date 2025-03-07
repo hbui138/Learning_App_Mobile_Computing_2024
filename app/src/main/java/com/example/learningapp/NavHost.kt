@@ -5,15 +5,17 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.languagelearningapp.ui.LearnScreen
+import com.example.learningapp.ui.LearnScreen
 import com.example.learningapp.ui.MenuScreen
 import com.example.learningapp.ui.WriteScreen
+import com.example.learningapp.ui.SettingsScreen
 
 // Define routes as a sealed class
 sealed class Screen(val route: String) {
-    object Menu : Screen("menu")
-    object LearnMenu : Screen("learnMenu")
-    object WriteMenu : Screen("writeMenu")
+    data object Menu : Screen("menu")
+    data object LearnMenu : Screen("learnMenu")
+    data object WriteMenu : Screen("writeMenu")
+    data object Settings : Screen("settings")
 }
 
 @Composable
@@ -32,6 +34,9 @@ fun AppNavGraph(
         }
         composable(Screen.WriteMenu.route) {
             WriteScreen(navController)
+        }
+        composable(Screen.Settings.route) {
+            SettingsScreen(navController)
         }
     }
 }
