@@ -9,6 +9,7 @@ import com.example.learningapp.ui.LearnScreen
 import com.example.learningapp.ui.MenuScreen
 import com.example.learningapp.ui.WriteScreen
 import com.example.learningapp.ui.SettingsScreen
+import com.example.learningapp.ui.learn.LearnAScreen
 
 // Define routes as a sealed class
 sealed class Screen(val route: String) {
@@ -16,6 +17,7 @@ sealed class Screen(val route: String) {
     data object LearnMenu : Screen("learnMenu")
     data object WriteMenu : Screen("writeMenu")
     data object Settings : Screen("settings")
+    data object LearnA: Screen("learnA")
 }
 
 @Composable
@@ -37,6 +39,9 @@ fun AppNavGraph(
         }
         composable(Screen.Settings.route) {
             SettingsScreen(navController)
+        }
+        composable(Screen.LearnA.route) {
+            LearnAScreen(navController)
         }
     }
 }

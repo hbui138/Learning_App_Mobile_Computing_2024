@@ -47,7 +47,10 @@ fun LearnScreen(navController: NavController) {
                 ) {
                     rowLetters.forEach { letter ->
                         Button(
-                            onClick = { selectedLetter = letter.toString() },
+                            onClick = {
+                                selectedLetter = letter.toString()
+                                navController.navigate("learn$letter")
+                                      },
                             modifier = Modifier
                                 .padding(4.dp)
                         ) {

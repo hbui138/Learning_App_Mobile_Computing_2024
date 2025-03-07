@@ -51,7 +51,11 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
+    implementation(libs.okhttp)
+
     implementation(libs.coil.compose)
+
+    implementation (libs.picasso)
 
     // Jetpack Compose integration
     implementation(libs.androidx.navigation.compose)
@@ -68,6 +72,8 @@ dependencies {
 
     // JSON serialization library, works with the Kotlin serialization plugin
     implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.androidx.room.ktx)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
