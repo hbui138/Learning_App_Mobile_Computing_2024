@@ -44,8 +44,7 @@ android {
 }
 
 dependencies {
-    val nav_version = "2.8.5"
-    val room_version = "2.6.1"
+    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
