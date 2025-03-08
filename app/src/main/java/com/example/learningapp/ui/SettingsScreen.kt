@@ -17,46 +17,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
-import java.util.*
-import android.app.DatePickerDialog
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun SettingsScreen(navController: NavHostController) {
     var username by remember { mutableStateOf(TextFieldValue()) }
-    var dob by remember { mutableStateOf(TextFieldValue()) }
+    var dob by remember {
+        val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"))
+        mutableStateOf(TextFieldValue(currentDate))
+    }
     var profileImageUri by remember { mutableStateOf<Uri?>(null) }
     var showDatePicker by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
-    val datePickerDialog = remember {
-        DatePickerDialog(
-            context,
-            { _, year, month, dayOfMonth ->
-                dob = TextFieldValue("${month + 1}/$dayOfMonth/$year")
-                showDatePicker = false
-            },
-            Calendar.getInstance().get(Calendar.YEAR),
-            Calendar.getInstance().get(Calendar.MONTH),
-            Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-        ).apply {
-            setOnDismissListener { showDatePicker = false }
-        }
-    }
 
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
         profileImageUri = uri
-    }
-
-    if (showDatePicker) {
-        datePickerDialog.show()
     }
 
     Column(
@@ -116,9 +101,71 @@ fun SettingsScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .padding(8.dp)
-                .clickable { showDatePicker = true },
+                .clickable {
+                    showDatePicker = true
+                },
             readOnly = true,
             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Start)
         )
+    }
+    if (showDatePicker) {
+        DatePickerDialogComponent(
+            currentDobString = dob.text,
+            onDateSelected = { newDate ->
+                dob = TextFieldValue(newDate)
+                showDatePicker = false
+            },
+            onDismiss = { showDatePicker = false }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerDialogComponent(
+    currentDobString: String,
+    onDateSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
+
+    val currentDate = try {
+        LocalDate.parse(currentDobString, dateFormatter)
+    } catch (e: Exception) {
+        LocalDate.now()
+    }
+
+    val initialMillis = currentDate.atStartOfDay(ZoneId.systemDefault())
+        .toInstant()
+        .toEpochMilli()
+
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialMillis
+    )
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    datePickerState.selectedDateMillis?.let { millis ->
+                        val selectedDate = Instant.ofEpochMilli(millis)
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate()
+                        onDateSelected(selectedDate.format(dateFormatter))
+                    }
+                    onDismiss()
+                }
+            ) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
     }
 }
