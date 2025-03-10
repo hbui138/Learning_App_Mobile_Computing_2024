@@ -1,6 +1,8 @@
 package com.example.learningapp
 
 import android.os.Bundle
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -24,9 +26,33 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.learningapp.ui.theme.LearningAppTheme
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Install the splash screen.
+        val splashScreen = installSplashScreen()
+
+        // Set the exit animation listener.
+        splashScreen.setOnExitAnimationListener { splashScreenViewProvider ->
+            // Load the predefined animation from the XML resource.
+            val slideUpAnimation = AnimationUtils.loadAnimation(this, R.anim.splash_exit)
+            slideUpAnimation.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation?) {
+                    // Optionally do something when the animation starts.
+                }
+                override fun onAnimationRepeat(animation: Animation?) {
+                    // Optionally do something on repeat.
+                }
+                override fun onAnimationEnd(animation: Animation?) {
+                    // Remove the splash screen once the animation ends.
+                    splashScreenViewProvider.remove()
+                }
+            })
+            // Start the animation on the splash screen view.
+            splashScreenViewProvider.view.startAnimation(slideUpAnimation)
+        }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
