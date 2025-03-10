@@ -4,9 +4,13 @@ import android.graphics.ImageDecoder
 import android.os.Build.VERSION.SDK_INT
 import android.widget.ImageView
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,41 +38,48 @@ import coil3.size.Size
 import com.example.learningapp.R
 import com.example.learningapp.fetchWordDetails
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun LearnAScreen(navController: NavController) {
     val wordsList = listOf("apple", "ant", "art")
     var words by remember { mutableStateOf<List<Pair<String, String?>>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
+            delay(2000) // Simulate loading time
             words = fetchWordDetails(wordsList)
             println("Fetched words: $words")
+            if (words.isNotEmpty()) {
+                isLoading = false
+            }
         }
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        // Display GIF at the top
-        item {
-            GifImage()
-        }
-
-        items(words) { (word, image) ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
+        if (isLoading) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                CircularProgressIndicator() // Show loading Animation
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Hiển thị từ
-                Text(text = word)
-
-                LoadImageWithPicasso(image)
+                item { GifImage(imageId = R.drawable.letter_a_learn) }
+                items(words) { (word, image) ->
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
+                        Text(text = word)
+                        LoadImageWithPicasso(image)
+                    }
+                }
             }
         }
     }
@@ -76,6 +88,7 @@ fun LearnAScreen(navController: NavController) {
 @Composable
 fun GifImage(
     modifier: Modifier = Modifier,
+    imageId: Int
 ) {
     val context = LocalContext.current
     val imageLoader = ImageLoader.Builder(context)
@@ -85,7 +98,7 @@ fun GifImage(
         .build()
     Image(
         painter = rememberAsyncImagePainter(
-            ImageRequest.Builder(context).data(data = R.drawable.letter_a_learn).apply(block = {
+            ImageRequest.Builder(context).data(data = imageId).apply(block = {
                 size(Size.ORIGINAL)
             }).build(), imageLoader = imageLoader
         ),
