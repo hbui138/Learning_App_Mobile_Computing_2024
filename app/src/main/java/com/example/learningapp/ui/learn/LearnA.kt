@@ -1,8 +1,12 @@
 package com.example.learningapp.ui.learn
 
+import android.graphics.ImageDecoder
+import android.os.Build.VERSION.SDK_INT
 import android.widget.ImageView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,6 +25,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
+import coil3.ImageLoader
+import coil3.compose.rememberAsyncImagePainter
+import coil3.gif.GifDecoder
+import coil3.request.ImageRequest
+import coil3.size.Size
+import com.example.learningapp.R
 import com.example.learningapp.fetchWordDetails
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
@@ -44,6 +54,11 @@ fun LearnAScreen(navController: NavController) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Display GIF at the top
+        item {
+            GifImage()
+        }
+
         items(words) { (word, image) ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -56,6 +71,27 @@ fun LearnAScreen(navController: NavController) {
             }
         }
     }
+}
+
+@Composable
+fun GifImage(
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .components {
+            add(GifDecoder.Factory())
+        }
+        .build()
+    Image(
+        painter = rememberAsyncImagePainter(
+            ImageRequest.Builder(context).data(data = R.drawable.letter_a_learn).apply(block = {
+                size(Size.ORIGINAL)
+            }).build(), imageLoader = imageLoader
+        ),
+        contentDescription = null,
+        modifier = modifier.fillMaxWidth(),
+    )
 }
 
 @Composable

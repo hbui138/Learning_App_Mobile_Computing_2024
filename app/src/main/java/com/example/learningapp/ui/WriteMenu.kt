@@ -47,7 +47,10 @@ fun WriteScreen(navController: NavController) {
                 ) {
                     rowLetters.forEach { letter ->
                         Button(
-                            onClick = { selectedLetter = letter.toString() },
+                            onClick = {
+                                selectedLetter = letter.toString()
+                                navController.navigate("write$letter")
+                            },
                             modifier = Modifier
                                 .padding(4.dp)
                         ) {
